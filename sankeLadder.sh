@@ -1,3 +1,8 @@
 #!/bin/bash -x
 
-echo "Welcome to snake ladder game"
+#constants
+STARTPOSITION=0;
+ENDPOSITION=100;
+
+#variables
+currentposition=0;
