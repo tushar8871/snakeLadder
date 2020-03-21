@@ -27,7 +27,15 @@ do
 			;;
 		$PLAY)
 			randomPosition=$(($((RANDOM%6))+1))
-			currentPosition=$((currentPosition+randomPosition))
+			if [ $((ENDPOSITION-currentPosition)) -eq $randomPosition ]
+			then
+				currentPosition=$((currentPosition+randomPosition))
+			elif [ $((ENDPOSITION-currentPosition)) -lt $randomPosition ]
+			then
+				currentPosition=$currentPosition
+			else
+				currentPosition=$((currentPosition+randomPosition))
+			fi
 			;;
 		$NOPLAY)
 			currentPosition=$((currentPosition+0))
