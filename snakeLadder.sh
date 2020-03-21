@@ -23,46 +23,61 @@ function diePosition(){
 	((numberOfTimes++))
 }
 
-#start execution here
+#function for player turn
+function playerTurn(){
+	winTimes=0;
+	numberOfTimes=1;
+	currentPosition=0;
+	while [[ $currentPosition -ne $ENDPOSITION ]]
+	do
+		rollToPlay=$((RANDOM%3))
+		case $rollToPlay in
+			$SNAKE)
+				randomPosition=$(($((RANDOM%6))+1))
+				if [[ $currentPosition -eq 0 || $currentPosition -lt $randomPosition ]]
+				then
+					diePosition $currentPosition
+					currentPosition=$currentPosition;
+				else
+					diePosition $currentPosition
+					currentPosition=$((currentPosition-randomPosition))
+				fi
+				;;
+			$PLAY)
+				randomPosition=$(($((RANDOM%6))+1))
+				if [ $((ENDPOSITION-currentPosition)) -eq $randomPosition ]
+				then
+					diePosition $currentPosition
+					currentPosition=$((currentPosition+randomPosition))
+					((winTimes++))
+				elif [ $((ENDPOSITION-currentPosition)) -lt $randomPosition ]
+				then
+					diePosition $currentPosition
+					currentPosition=$currentPosition
+					((winTimes++))
+				else
+					diePosition $currentPosition
+					currentPosition=$((currentPosition+randomPosition))
+					((winTimes++))
+				fi
+				;;
+			$NOPLAY)
+				diePosition $currentPosition
+				currentPosition=$((currentPosition+0))
+				;;
+		esac
+	done
+	echo $winTimes
+}
 
-while [[ $currentPosition -ne $ENDPOSITION ]]
-do
-	rollToPlay=$((RANDOM%3))
-	case $rollToPlay in
-		$SNAKE)
-			randomPosition=$(($((RANDOM%6))+1))
-			if [[ $currentPosition -eq 0 || $currentPosition -lt $randomPosition ]]
-			then
-				diePosition $currentPosition
-				currentPosition=$currentPosition;
-			else
-				diePosition $currentPosition
-				currentPosition=$((currentPosition-randomPosition))
-			fi
-			;;
-		$PLAY)
-			randomPosition=$(($((RANDOM%6))+1))
-			if [ $((ENDPOSITION-currentPosition)) -eq $randomPosition ]
-			then
-				diePosition $currentPosition
-				currentPosition=$((currentPosition+randomPosition))
-				((winTimes++))
-			elif [ $((ENDPOSITION-currentPosition)) -lt $randomPosition ]
-			then
-				diePosition $currentPosition
-				currentPosition=$currentPosition
-				((winTimes++))
-			else
-				diePosition $currentPosition
-				currentPosition=$((currentPosition+randomPosition))
-				((winTimes++))
-			fi
-			;;
-		$NOPLAY)
-			diePosition $currentPosition
-			currentPosition=$((currentPosition+0))
-			;;
-	esac
-done
 
-echo "Number of times win : $winTimes"
+#start execution
+player1WinTime=$( playerTurn $(()) )
+player2WinTime=$( playerTurn $(()) )
+
+if [[ $player1WinTime -lt $player2WinTime ]] 
+then
+	echo "Player 1 wins !"
+else
+	echo "Player 2 wins !"
+fi
